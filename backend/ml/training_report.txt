@@ -1,0 +1,113 @@
+======================================================================
+  ML MODEL TRAINING REPORT
+  Intelligent Workflow Automation System
+======================================================================
+
+Training Date: 2026-02-28 10:55:16
+Dataset: data/raw/synthetic_requests.csv
+Test Size: 20.0%
+Random State: 42
+
+======================================================================
+  MODEL PERFORMANCE COMPARISON
+======================================================================
+
+
+Logistic Regression:
+----------------------------------------------------------------------
+  Accuracy:  0.9868
+  Precision: 0.9677
+  Recall:    0.9836
+  F1 Score:  0.9756
+  ROC-AUC:   0.9995
+
+  Confusion Matrix:
+  [[ 165    2]
+   [   1   60]]
+
+  Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.99      0.99      0.99       167
+           1       0.97      0.98      0.98        61
+
+    accuracy                           0.99       228
+   macro avg       0.98      0.99      0.98       228
+weighted avg       0.99      0.99      0.99       228
+
+
+Random Forest:
+----------------------------------------------------------------------
+  Accuracy:  0.9868
+  Precision: 0.9833
+  Recall:    0.9672
+  F1 Score:  0.9752
+  ROC-AUC:   0.9977
+
+  Confusion Matrix:
+  [[ 166    1]
+   [   2   59]]
+
+  Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.99      0.99      0.99       167
+           1       0.98      0.97      0.98        61
+
+    accuracy                           0.99       228
+   macro avg       0.99      0.98      0.98       228
+weighted avg       0.99      0.99      0.99       228
+
+
+Gradient Boosting:
+----------------------------------------------------------------------
+  Accuracy:  0.9825
+  Precision: 0.9831
+  Recall:    0.9508
+  F1 Score:  0.9667
+  ROC-AUC:   0.9573
+
+  Confusion Matrix:
+  [[ 166    1]
+   [   3   58]]
+
+  Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.98      0.99      0.99       167
+           1       0.98      0.95      0.97        61
+
+    accuracy                           0.98       228
+   macro avg       0.98      0.97      0.98       228
+weighted avg       0.98      0.98      0.98       228
+
+======================================================================
+  BEST MODEL: Logistic Regression
+======================================================================
+
+Selected based on F1 Score: 0.9756
+
+Performance Summary:
+  - Accuracy:  98.68%
+  - Precision: 96.77%
+  - Recall:    98.36%
+  - F1 Score:  97.56%
+  - ROC-AUC:   99.95%
+
+======================================================================
+  FEATURE IMPORTANCE
+======================================================================
+
+Feature importance not available for this model type.
+
+======================================================================
+  DEPLOYMENT READY
+======================================================================
+
+Model files saved to: backend/ml/models/
+  - best_model.pkl
+  - label_encoder_type.pkl
+  - label_encoder_stage.pkl
+  - feature_columns.pkl
+  - scaler.pkl
+

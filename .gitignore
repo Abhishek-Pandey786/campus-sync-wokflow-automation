@@ -1,0 +1,102 @@
+# Presentation / Demo docs (local only)
+ANTIGRAVITY_HANDOFF_PROMPT.md
+DEMO_CHEATSHEET.md
+DEMO_GUIDE.md
+EMERGENCY_GUIDE.md
+PREDICTION_VALUES.md
+QUICK_REFERENCE.md
+TOMORROW_CHECKLIST.md
+TOMORROW_DEMO_SCRIPT.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+venv/
+env/
+ENV/
+.venv
+
+# FastAPI / SQLAlchemy
+instance/
+.webassets-cache
+*.db
+*.sqlite
+
+# ML Models (allow .pkl files — needed for project to run)
+# *.pkl
+*.joblib
+*.h5
+*.model
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.gemini/
+.DS_Store
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Node / React
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+dist/
+build/
+
+# Docker
+*.env.docker
+docker-compose.override.yml
+
+# Database
+*.sql
+!schema.sql
+
+# Data (allow synthetic dataset for project reproducibility)
+# data/raw/*
+# !data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.pytest_cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints

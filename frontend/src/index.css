@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased font-sans;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-700 rounded-full hover:bg-slate-600;
+  }
+
+  /* Custom range slider */
+  input[type="range"] {
+    @apply appearance-none bg-transparent cursor-pointer;
+  }
+  input[type="range"]::-webkit-slider-track {
+    @apply h-2 rounded-full;
+    background: linear-gradient(to right, #4f46e5, #7c3aed);
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none w-5 h-5 rounded-full bg-white border-2 border-primary-500 shadow-lg;
+    margin-top: -6px;
+  }
+  input[type="range"]::-moz-range-track {
+    @apply h-2 rounded-full border-0;
+    background: linear-gradient(to right, #4f46e5, #7c3aed);
+  }
+  input[type="range"]::-moz-range-thumb {
+    @apply w-5 h-5 rounded-full bg-white border-2 border-primary-500 shadow-lg;
+  }
+}
+
+@layer components {
+  /* ───── Glass Card ───── */
+  .card {
+    @apply relative bg-white/[0.05] backdrop-blur-xl rounded-2xl
+           border border-white/[0.08] p-6
+           shadow-glass transition-all duration-300;
+  }
+  .card:hover {
+    @apply border-white/[0.15] shadow-glass;
+  }
+
+  /* ───── Buttons ───── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-gradient-to-r from-primary-500 to-accent-600
+           text-white font-semibold px-5 py-2.5 rounded-xl
+           transition-all duration-300 ease-out
+           hover:shadow-glow-indigo hover:scale-[1.02]
+           active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-white/[0.06] border border-white/[0.1]
+           text-slate-200 font-medium px-4 py-2 rounded-xl
+           transition-all duration-300
+           hover:bg-white/[0.1] hover:border-white/[0.2]
+           active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           bg-red-500/20 border border-red-500/30
+           text-red-300 font-medium px-4 py-2 rounded-xl
+           transition-all duration-300
+           hover:bg-red-500/30 hover:border-red-500/50
+           active:scale-[0.98];
+  }
+
+  /* ───── Inputs ───── */
+  .input-field {
+    @apply bg-white/[0.05] border border-white/[0.1] text-slate-100
+           rounded-xl px-4 py-2.5 w-full
+           transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50
+           focus:bg-white/[0.08]
+           placeholder-slate-500;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-slate-400 mb-1.5;
+  }
+
+  /* ───── Stat card ───── */
+  .stat-card {
+    @apply card flex flex-col gap-2 overflow-hidden;
+  }
+
+  /* ───── Badges ───── */
+  .badge-green {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold
+           bg-emerald-500/15 text-emerald-400 border border-emerald-500/20;
+  }
+  .badge-yellow {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold
+           bg-amber-500/15 text-amber-400 border border-amber-500/20;
+  }
+  .badge-red {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold
+           bg-red-500/15 text-red-400 border border-red-500/20;
+  }
+  .badge-blue {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold
+           bg-primary-500/15 text-primary-400 border border-primary-500/20;
+  }
+  .badge-purple {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold
+           bg-violet-500/15 text-violet-400 border border-violet-500/20;
+  }
+
+  /* ───── Animations ───── */
+  .animate-stagger-1 { animation-delay: 0.1s; }
+  .animate-stagger-2 { animation-delay: 0.2s; }
+  .animate-stagger-3 { animation-delay: 0.3s; }
+  .animate-stagger-4 { animation-delay: 0.4s; }
+
+  /* ───── Glass overlay for modals/drawers ───── */
+  .glass-overlay {
+    @apply fixed inset-0 z-50 bg-black/60 backdrop-blur-sm;
+  }
+
+  /* ───── Page header gradient ───── */
+  .page-header {
+    @apply relative pb-6 mb-2;
+  }
+  .page-header h1 {
+    @apply text-2xl sm:text-3xl font-bold text-white tracking-tight;
+  }
+  .page-header p {
+    @apply text-slate-400 mt-1.5 text-sm sm:text-base;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-accent-400;
+  }
+  .border-gradient {
+    border-image: linear-gradient(to right, #6366f1, #8b5cf6) 1;
+  }
+}
