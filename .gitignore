@@ -100,3 +100,15 @@ coverage.xml
 
 # Jupyter Notebooks
 .ipynb_checkpoints
+
+# Demo Scripts & Internal Guides
+ANTIGRAVITY_HANDOFF_PROMPT.md
+DEMO_CHEATSHEET.md
+DEMO_GUIDE.md
+EMERGENCY_GUIDE.md
+PREDICTION_VALUES.md
+QUICK_REFERENCE.md
+TOMORROW_CHECKLIST.md
+TOMORROW_DEMO_SCRIPT.md
+thursday.md
+status.md
