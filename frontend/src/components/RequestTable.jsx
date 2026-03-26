@@ -1,4 +1,10 @@
-import { AlertCircle, ArrowUpRight, Clock, CheckCircle2, XCircle } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowUpRight,
+  Clock,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 
 const STATUS_CONFIG = {
   pending: {
@@ -37,7 +43,7 @@ export default function RequestTable({ requests, loading, onRowClick }) {
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="h-14 rounded-xl bg-white/[0.03] animate-pulse"
+            className="h-14 rounded-xl bg-white/[0.08] animate-pulse"
             style={{ animationDelay: `${i * 80}ms` }}
           />
         ))}
@@ -47,10 +53,14 @@ export default function RequestTable({ requests, loading, onRowClick }) {
 
   if (!requests?.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-slate-500">
-        <AlertCircle className="w-10 h-10 mb-3 text-slate-600" />
-        <p className="font-medium">No requests found</p>
-        <p className="text-sm mt-1">Try adjusting your filters</p>
+      <div className="empty-state text-slate-500">
+        <div className="empty-state-icon">
+          <AlertCircle className="w-7 h-7 text-primary-500/70" />
+        </div>
+        <div className="text-center">
+          <p className="font-semibold text-slate-300">You're all caught up!</p>
+          <p className="text-sm mt-1 text-slate-500">No requests match your current filters.</p>
+        </div>
       </div>
     );
   }
@@ -59,7 +69,7 @@ export default function RequestTable({ requests, loading, onRowClick }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/[0.06]">
+          <tr className="border-b border-white/[0.12]">
             {["ID", "Type", "Title", "Priority", "Status", "Created"].map(
               (h) => (
                 <th
@@ -68,13 +78,14 @@ export default function RequestTable({ requests, loading, onRowClick }) {
                 >
                   {h}
                 </th>
-              )
+              ),
             )}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/[0.04]">
+        <tbody className="divide-y divide-white/[0.08]">
           {requests.map((req) => {
-            const statusCfg = STATUS_CONFIG[req.status] || STATUS_CONFIG.pending;
+            const statusCfg =
+              STATUS_CONFIG[req.status] || STATUS_CONFIG.pending;
             const StatusIcon = statusCfg.icon;
             const prioCfg = PRIORITY_CONFIG[req.priority] || PRIORITY_CONFIG[1];
 
@@ -82,9 +93,7 @@ export default function RequestTable({ requests, loading, onRowClick }) {
               <tr
                 key={req.id}
                 onClick={() => onRowClick?.(req)}
-                className={`group transition-all duration-200 hover:bg-white/[0.03] ${
-                  onRowClick ? "cursor-pointer" : ""
-                }`}
+                className={`table-row-hover ${onRowClick ? "cursor-pointer" : ""}`}
               >
                 <td className="py-3.5 pr-4 text-slate-500 font-mono text-xs">
                   #{req.id}

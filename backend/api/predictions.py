@@ -9,6 +9,7 @@ from typing import Dict, Optional, List
 from datetime import datetime
 import joblib
 import numpy as np
+import pandas as pd
 import os
 
 from services.llm_service import explain_delay_prediction
@@ -38,6 +39,12 @@ def load_models():
         _model_cache['feature_columns'] = joblib.load(FEATURE_COLUMNS_PATH)
         _model_cache['label_encoder_type'] = joblib.load(LABEL_ENCODER_TYPE_PATH)
         _model_cache['label_encoder_stage'] = joblib.load(LABEL_ENCODER_STAGE_PATH)
+        # Load scaler — only used by SVM / Neural Network at inference
+        scaler_path = f"{MODEL_DIR}/scaler.pkl"
+        _model_cache['scaler'] = joblib.load(scaler_path) if os.path.exists(scaler_path) else None
+        # Detect model type so we know whether to scale at inference
+        model_type = type(_model_cache['model']).__name__
+        _model_cache['needs_scaling'] = model_type in ('SVC', 'MLPClassifier')
         _model_cache['loaded'] = True
         return _model_cache
     except Exception as e:
@@ -152,31 +159,44 @@ def engineer_prediction_features(request: PredictionRequest, models: Dict) -> np
         request.stage_approved_duration +
         request.stage_processed_duration
     )
-    
-    # Build feature array in correct order
-    features = [
-        request_type_encoded,
-        request.priority,
-        request.created_hour,
-        request.created_day_of_week,
-        is_weekend,
-        is_peak_hour,
-        is_business_hours,
-        is_high_priority,
-        is_low_priority,
-        request.handler_workload,
-        high_workload,
-        sla_hours,
-        request.stage_created_duration,
-        request.stage_assigned_duration,
-        request.stage_verified_duration,
-        request.stage_approved_duration,
-        request.stage_processed_duration,
-        total_stage_time,
-        final_stage_encoded
-    ]
-    
-    return np.array(features).reshape(1, -1)
+
+    # sla_utilization: engineered in training but was missing at inference — must match exactly
+    sla_utilization = total_stage_time / sla_hours if sla_hours > 0 else 0.0
+
+    # Build feature dict — all keys that could appear in feature_columns.pkl
+    feature_dict = {
+        'request_type_encoded':    request_type_encoded,
+        'priority':                request.priority,
+        'created_hour':            request.created_hour,
+        'created_day_of_week':     request.created_day_of_week,
+        'is_weekend':              is_weekend,
+        'is_peak_hour':            is_peak_hour,
+        'is_business_hours':       is_business_hours,
+        'is_high_priority':        is_high_priority,
+        'is_low_priority':         is_low_priority,
+        'handler_workload':        request.handler_workload,
+        'high_workload':           high_workload,
+        'sla_hours':               sla_hours,
+        'stage_created_duration':  request.stage_created_duration,
+        'stage_assigned_duration': request.stage_assigned_duration,
+        'stage_verified_duration': request.stage_verified_duration,
+        'stage_approved_duration': request.stage_approved_duration,
+        'stage_processed_duration':request.stage_processed_duration,
+        'total_stage_time':        total_stage_time,
+        'final_stage_encoded':     final_stage_encoded,
+        'sla_utilization':         sla_utilization,       # was in training, was missing at inference
+    }
+
+    # Use saved feature_columns order — this guarantees exact column alignment with training
+    ordered_cols = models.get('feature_columns', list(feature_dict.keys()))
+    df = pd.DataFrame([feature_dict])[ordered_cols]
+
+    # Apply scaler ONLY for models that need it (SVM, MLPClassifier).
+    # LogisticRegression and tree-based models were trained on RAW (unscaled) features.
+    if models.get('needs_scaling') and models.get('scaler') is not None:
+        scaled = models['scaler'].transform(df)
+        return pd.DataFrame(scaled, columns=ordered_cols)
+    return df
 
 
 def analyze_contributing_factors(request: PredictionRequest, prediction_score: float) -> list:
@@ -267,8 +287,11 @@ async def predict_delay(
         # Engineer features
         features = engineer_prediction_features(request, models)
         
-        # Make prediction
-        prediction_score = float(models['model'].predict_proba(features)[0][1])
+        # Make prediction — proba array columns match model.classes_ order
+        proba = models['model'].predict_proba(features)[0]
+        classes = list(models['model'].classes_)
+        delayed_idx = classes.index(1) if 1 in classes else 1
+        prediction_score = float(proba[delayed_idx])
         is_likely_delayed = prediction_score > 0.5
         
         # Determine confidence

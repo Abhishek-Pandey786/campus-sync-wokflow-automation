@@ -105,7 +105,7 @@ async def list_service_requests(
     stage_filter: Optional[WorkflowStage] = None,
     type_filter: Optional[str] = None,
     skip: int = Query(0, ge=0),
-    limit: int = Query(50, ge=1, le=100)
+    limit: int = Query(50, ge=1, le=5000)
 ):
     """
     List service requests with filters

@@ -1,0 +1,14 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.6, pytest-7.4.4, pluggy-1.6.0
+rootdir: D:\Documents\Christ University\6th-Trimester\WorkFlow-Automation\backend
+configfile: pytest.ini
+plugins: anyio-4.12.1, Faker-22.6.0, asyncio-0.23.4
+asyncio: mode=Mode.STRICT
+collected 42 items
+
+tests\test_auth.py ............                                          [ 28%]
+tests\test_requests.py ...........                                       [ 54%]
+tests\test_security.py ...........                                       [ 80%]
+tests\test_workflows.py ........                                         [100%]
+
+============================= 42 passed in 17.65s =============================

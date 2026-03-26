@@ -4,19 +4,28 @@ import { SkeletonCard } from "../components/LoadingSpinner";
 import { getRequests } from "../api/requests";
 import { getModelInfo } from "../api/predictions";
 import client from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import {
   Activity,
   Cpu,
-  Layers,
+  GraduationCap,
   CheckCircle2,
   XCircle,
 } from "lucide-react";
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const [requests, setRequests] = useState([]);
   const [modelInfo, setModelInfo] = useState(null);
   const [apiOnline, setApiOnline] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Greeting based on time of day
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const today = new Date().toLocaleDateString("en-IN", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric"
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -56,10 +65,10 @@ export default function DashboardPage() {
 
   const typeColors = [
     "from-primary-500 to-primary-600",
-    "from-violet-500 to-violet-600",
+    "from-accent-500 to-accent-600",
     "from-emerald-500 to-emerald-600",
-    "from-amber-500 to-amber-600",
     "from-cyan-500 to-cyan-600",
+    "from-violet-500 to-violet-600",
     "from-rose-500 to-rose-600",
   ];
 
@@ -67,13 +76,15 @@ export default function DashboardPage() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="page-header">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-primary-500/15 flex items-center justify-center">
-            <Layers className="w-5 h-5 text-primary-400" />
-          </div>
-          <div>
-            <h1>Dashboard</h1>
-            <p>ML-Powered Service Request Management</p>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-11 h-11 rounded-xl bg-primary-500/15 border border-primary-500/20 flex items-center justify-center">
+              <GraduationCap className="w-5 h-5 text-primary-400" />
+            </div>
+            <div>
+              <h1>{greeting}, {user?.full_name?.split(' ')[0] ?? 'Admin'} 👋</h1>
+              <p>{today} &middot; Smart Campus Workflow Management</p>
+            </div>
           </div>
         </div>
       </div>
@@ -139,10 +150,10 @@ export default function DashboardPage() {
       {/* Model info + breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ML Model card */}
-        <div className="card">
+        <div className="card group">
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-9 h-9 rounded-xl bg-violet-500/15 flex items-center justify-center">
-              <Cpu className="w-4.5 h-4.5 text-violet-400" />
+            <div className="w-9 h-9 rounded-xl bg-accent-500/15 flex items-center justify-center">
+              <Cpu className="w-4.5 h-4.5 text-accent-400" />
             </div>
             <h2 className="text-lg font-semibold text-white">
               ML Model Status
@@ -177,7 +188,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Request type breakdown */}
-        <div className="card">
+        <div className="card group">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-9 h-9 rounded-xl bg-primary-500/15 flex items-center justify-center">
               <Activity className="w-4.5 h-4.5 text-primary-400" />
@@ -194,7 +205,7 @@ export default function DashboardPage() {
                   ? Math.round((count / total) * 100)
                   : 0;
                 return (
-                  <div key={type} className="group">
+                  <div key={type}>
                     <div className="flex items-center justify-between text-sm mb-1.5">
                       <span className="capitalize text-slate-300 font-medium">
                         {type.replace("_", " ")}
@@ -203,11 +214,11 @@ export default function DashboardPage() {
                         {count} ({pct}%)
                       </span>
                     </div>
-                    <div className="w-full bg-white/[0.06] rounded-full h-2">
+                    <div className="w-full bg-white/[0.06] rounded-full h-2 overflow-hidden">
                       <div
                         className={`bg-gradient-to-r ${
                           typeColors[idx % typeColors.length]
-                        } h-2 rounded-full transition-all duration-700`}
+                        } h-2 rounded-full transition-all duration-1000 ease-out`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>

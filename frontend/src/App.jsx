@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
@@ -11,13 +11,27 @@ import AlertsPage from "./pages/AlertsPage";
 
 function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/50">
+    <div className="min-h-screen bg-slate-950 ambient-bg">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="z-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
     </div>
   );
+}
+
+/** Redirect students away from admin-only pages */
+function AdminOnly({ children }) {
+  const { isAdmin, isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAdmin) return <Navigate to="/requests" replace />;
+  return children;
+}
+
+/** Students land on /requests; admins on / */
+function HomeRedirect() {
+  const { isAdmin } = useAuth();
+  return isAdmin ? <DashboardPage /> : <Navigate to="/requests" replace />;
 }
 
 export default function App() {
@@ -26,56 +40,38 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <DashboardPage />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/requests"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <RequestsPage />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/predictions"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <PredictionsPage />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/analytics"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <AnalyticsPage />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/alerts"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <AlertsPage />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+
+          {/* Home — admin gets dashboard, student redirected to /requests */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout><HomeRedirect /></Layout>
+            </ProtectedRoute>
+          } />
+
+          {/* Shared — both roles */}
+          <Route path="/requests" element={
+            <ProtectedRoute>
+              <Layout><RequestsPage /></Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/predictions" element={
+            <ProtectedRoute>
+              <Layout><PredictionsPage /></Layout>
+            </ProtectedRoute>
+          } />
+
+          {/* Admin-only pages */}
+          <Route path="/analytics" element={
+            <AdminOnly>
+              <Layout><AnalyticsPage /></Layout>
+            </AdminOnly>
+          } />
+          <Route path="/alerts" element={
+            <AdminOnly>
+              <Layout><AlertsPage /></Layout>
+            </AdminOnly>
+          } />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

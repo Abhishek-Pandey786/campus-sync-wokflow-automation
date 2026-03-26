@@ -278,7 +278,7 @@ export default function AlertsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {alerts.map((alert) => {
+          {alerts.map((alert, idx) => {
             const cfg =
               URGENCY_CONFIG[alert.urgency] || URGENCY_CONFIG.medium;
             const Icon = cfg.icon;
@@ -287,7 +287,8 @@ export default function AlertsPage() {
                 key={alert.request_id}
                 className={`card border ${cfg.border} ${cfg.bg} space-y-4 ${
                   cfg.pulse ? "animate-pulse-glow" : ""
-                }`}
+                } opacity-0 animate-fade-in`}
+                style={{ animationDelay: `${idx * 80}ms` }}
               >
                 {/* Top row */}
                 <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -351,7 +352,7 @@ export default function AlertsPage() {
                   </div>
                 </div>
 
-                {/* Admin escalate section */}
+                {/* Admin escalate */}
                 {isAdmin && (
                   <div className="flex items-center gap-2 flex-wrap pt-3 border-t border-white/[0.06]">
                     <input

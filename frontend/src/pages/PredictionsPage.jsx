@@ -72,10 +72,18 @@ export default function PredictionsPage() {
       const data = await predictDelay(payload);
       setResult(data);
     } catch (err) {
-      setError(
-        err.response?.data?.detail ??
-          "Prediction failed. Is the backend running?"
-      );
+      const status = err.response?.status;
+      if (status === 503) {
+        setError(
+          "🤖 ML model is not loaded. Please ask your administrator to trigger a model retrain via Settings → Retrain Model."
+        );
+      } else {
+        setError(
+          err.friendlyMessage ??
+          err.response?.data?.detail ??
+          "Prediction failed. Please check that the backend server is running."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -87,39 +95,39 @@ export default function PredictionsPage() {
         request_type: "certificate",
         priority: 3,
         created_hour: 10,
-        created_day_of_week: 0,
-        handler_workload: 2,
-        stage_created_duration: 1,
-        stage_assigned_duration: 2,
-        stage_verified_duration: 3,
-        stage_approved_duration: 4,
-        stage_processed_duration: 5,
+        created_day_of_week: 1, // Tuesday
+        handler_workload: 3,
+        stage_created_duration: 4,
+        stage_assigned_duration: 6,
+        stage_verified_duration: 10,
+        stage_approved_duration: 10,
+        stage_processed_duration: 20, // Total 50 hrs. SLA is 72. Risk: ~0%
         final_stage: "completed",
       },
       medium: {
         request_type: "hostel",
         priority: 2,
         created_hour: 14,
-        created_day_of_week: 3,
-        handler_workload: 5,
-        stage_created_duration: 9,
-        stage_assigned_duration: 9,
-        stage_verified_duration: 9,
-        stage_approved_duration: 9,
-        stage_processed_duration: 9,
+        created_day_of_week: 0, // Monday
+        handler_workload: 6,
+        stage_created_duration: 5,
+        stage_assigned_duration: 7,
+        stage_verified_duration: 10,
+        stage_approved_duration: 12,
+        stage_processed_duration: 14, // Total 48 hrs. SLA is 48. Risk: ~61.8%
         final_stage: "completed",
       },
       high: {
-        request_type: "hostel",
+        request_type: "certificate",
         priority: 1,
-        created_hour: 17,
-        created_day_of_week: 4,
-        handler_workload: 10,
-        stage_created_duration: 8,
-        stage_assigned_duration: 16,
-        stage_verified_duration: 20,
-        stage_approved_duration: 18,
-        stage_processed_duration: 25,
+        created_hour: 16,
+        created_day_of_week: 4, // Friday
+        handler_workload: 9,
+        stage_created_duration: 6,
+        stage_assigned_duration: 10,
+        stage_verified_duration: 15,
+        stage_approved_duration: 15,
+        stage_processed_duration: 22, // Total 68 hrs. SLA is 72 but weak conditions push risk very high.
         final_stage: "completed",
       },
     };
@@ -132,8 +140,8 @@ export default function PredictionsPage() {
       {/* Header */}
       <div className="page-header">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-violet-500/15 flex items-center justify-center">
-            <Brain className="w-5 h-5 text-violet-400" />
+          <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center">
+            <Brain className="w-5 h-5 text-accent-400" />
           </div>
           <div>
             <h1>ML Delay Prediction</h1>

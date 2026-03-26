@@ -1,4 +1,10 @@
-import { Target, TrendingUp, Shield, MessageSquare, ListChecks } from "lucide-react";
+import {
+  Target,
+  TrendingUp,
+  Shield,
+  MessageSquare,
+  ListChecks,
+} from "lucide-react";
 
 export default function PredictionResult({ result }) {
   if (!result) return null;
@@ -6,8 +12,7 @@ export default function PredictionResult({ result }) {
   const prob = result.prediction_score;
   const pct = (prob * 100).toFixed(1);
 
-  const riskLevel =
-    prob >= 0.8 ? "high" : prob >= 0.5 ? "medium" : "low";
+  const riskLevel = prob >= 0.7 ? "high" : prob >= 0.5 ? "medium" : "low";
 
   const riskConfig = {
     high: {
@@ -22,7 +27,7 @@ export default function PredictionResult({ result }) {
       bg: "from-amber-500/20 to-amber-600/5",
       ring: "stroke-amber-500",
       label: "Medium Risk",
-      glow: "",
+      glow: "shadow-glow-amber",
     },
     low: {
       color: "text-emerald-400",
@@ -35,7 +40,7 @@ export default function PredictionResult({ result }) {
 
   const cfg = riskConfig[riskLevel];
   const circumference = 2 * Math.PI * 54;
-  const dashOffset = circumference - (prob * circumference);
+  const dashOffset = circumference - prob * circumference;
 
   const stars = { high: "★★★", medium: "★★☆", low: "★☆☆" };
   const starStr = stars[result.confidence] ?? "★☆☆";
@@ -85,9 +90,7 @@ export default function PredictionResult({ result }) {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={`text-2xl font-bold ${cfg.color}`}>
-                {pct}%
-              </span>
+              <span className={`text-2xl font-bold ${cfg.color}`}>{pct}%</span>
             </div>
           </div>
         </div>
@@ -105,15 +108,13 @@ export default function PredictionResult({ result }) {
             <TrendingUp className="w-4 h-4" />
             {result.is_likely_delayed ? "Likely Delayed" : "On-Time"}
           </div>
-          <p className={`text-sm mt-2 font-medium ${cfg.color}`}>
-            {cfg.label}
-          </p>
+          <p className={`text-sm mt-2 font-medium ${cfg.color}`}>{cfg.label}</p>
         </div>
 
         {/* Confidence */}
         <div className="card flex flex-col items-center justify-center py-6">
           <p className="text-xs text-slate-400 mb-3 font-medium">Confidence</p>
-          <p className="text-2xl font-bold text-amber-400 mb-1">{starStr}</p>
+          <p className="text-2xl font-bold text-accent-400 mb-1">{starStr}</p>
           <p className="text-sm text-slate-300 font-medium">{confLabel}</p>
         </div>
       </div>
@@ -126,7 +127,7 @@ export default function PredictionResult({ result }) {
             AI Explanation
           </h3>
         </div>
-        <div className="bg-primary-500/[0.06] border border-primary-500/15 rounded-xl p-4 text-sm text-primary-200 leading-relaxed">
+        <div className="bg-primary-500/[0.12] border border-primary-500/30 rounded-xl p-4 text-sm text-primary-200 leading-relaxed">
           {result.explanation}
         </div>
       </div>
@@ -135,7 +136,7 @@ export default function PredictionResult({ result }) {
       {result.contributing_factors?.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <ListChecks className="w-4.5 h-4.5 text-violet-400" />
+            <ListChecks className="w-4.5 h-4.5 text-accent-400" />
             <h3 className="text-base font-semibold text-slate-200">
               Contributing Factors
             </h3>
@@ -144,9 +145,9 @@ export default function PredictionResult({ result }) {
             {result.contributing_factors.map((f, i) => (
               <li
                 key={i}
-                className="flex items-start gap-3 text-sm text-slate-300 bg-white/[0.03] rounded-xl px-4 py-2.5"
+                className="flex items-start gap-3 text-sm text-slate-300 bg-white/[0.08] rounded-xl px-4 py-2.5"
               >
-                <span className="w-5 h-5 rounded-full bg-violet-500/15 text-violet-400 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-accent-500/15 text-accent-400 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5">
                   {i + 1}
                 </span>
                 {f}
@@ -164,7 +165,7 @@ export default function PredictionResult({ result }) {
             Recommendation
           </h3>
         </div>
-        <div className="bg-emerald-500/[0.06] border border-emerald-500/15 rounded-xl p-4 text-sm text-emerald-200 leading-relaxed">
+        <div className="bg-emerald-500/[0.12] border border-emerald-500/30 rounded-xl p-4 text-sm text-emerald-200 leading-relaxed">
           {result.recommendation}
         </div>
       </div>

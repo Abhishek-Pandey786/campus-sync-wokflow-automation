@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import {
   ClipboardList,
   AlertTriangle,
@@ -52,6 +53,45 @@ const textColorMap = {
   purple: "text-violet-400",
 };
 
+function AnimatedValue({ value }) {
+  const [display, setDisplay] = useState(value);
+  const prevRef = useRef(value);
+
+  useEffect(() => {
+    const target =
+      typeof value === "string" ? parseFloat(value) : value;
+    const start = typeof prevRef.current === "string" ? parseFloat(prevRef.current) : prevRef.current;
+
+    if (isNaN(target)) {
+      setDisplay(value);
+      prevRef.current = value;
+      return;
+    }
+
+    const isPercent = typeof value === "string" && value.includes("%");
+    const duration = 800;
+    const startTime = performance.now();
+
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = start + (target - start) * eased;
+      setDisplay(
+        isPercent
+          ? `${current.toFixed(1)}%`
+          : Math.round(current)
+      );
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+    prevRef.current = value;
+  }, [value]);
+
+  return <>{display}</>;
+}
+
 export default function StatsCard({
   title,
   value,
@@ -63,9 +103,9 @@ export default function StatsCard({
 
   return (
     <div
-      className={`card border-l-[3px] ${accentBorderMap[color]} hover:scale-[1.02] transition-all duration-300 group overflow-hidden`}
+      className={`card border-l-[3px] ${accentBorderMap[color]} hover:scale-[1.03] transition-all duration-300 group overflow-hidden`}
     >
-      {/* Gradient glow */}
+      {/* Hover gradient */}
       <div
         className={`absolute inset-0 bg-gradient-to-br ${gradientMap[color]} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`}
       />
@@ -74,12 +114,14 @@ export default function StatsCard({
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-medium text-slate-400">{title}</p>
           <div
-            className={`w-10 h-10 rounded-xl ${iconBgMap[color]} flex items-center justify-center transition-transform group-hover:scale-110`}
+            className={`w-10 h-10 rounded-xl ${iconBgMap[color]} flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
           >
             <IconComponent className="w-5 h-5" />
           </div>
         </div>
-        <p className={`text-3xl font-bold ${textColorMap[color]}`}>{value}</p>
+        <p className={`text-3xl font-bold ${textColorMap[color]} animate-count-up`}>
+          <AnimatedValue value={value} />
+        </p>
         {subtitle && (
           <p className="text-xs text-slate-500 mt-1.5">{subtitle}</p>
         )}
