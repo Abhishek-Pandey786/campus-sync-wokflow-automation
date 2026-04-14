@@ -166,7 +166,8 @@ MIT License - Academic Project
 
 ## Author
 
-**MCA Final Year Student**  
+**MCA Final Year Student**
+Abhishek Pandey
 Christ University  
 Academic Year: 2025-2026
 
